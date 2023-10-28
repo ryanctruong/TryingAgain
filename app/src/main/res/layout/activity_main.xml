@@ -6,7 +6,7 @@
     android:orientation="horizontal">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/ticker_list_FG"
+        android:id="@+id/am_ticker_list"
         android:name="com.example.assignment2updated.TickerListFragment"
         android:layout_width="match_parent"
         android:layout_height="324dp"
@@ -14,7 +14,7 @@
         tools:layout="@layout/fragment_tickerlist" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/info_web_FG"
+        android:id="@+id/am_info_web"
         android:name="com.example.assignment2updated.InfoWebFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

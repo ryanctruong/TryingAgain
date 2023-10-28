@@ -15,41 +15,50 @@ import androidx.lifecycle.ViewModelProvider;
 
 public class TickerListFragment extends Fragment {
 
-    private TickerViewModel tickerVM;
-    ListView tickerListView;
+    private TickerViewModel tickerViewModel;
+    private ListView tickerListView;
 
-    AdapterView.OnItemClickListener tickerListener = new AdapterView.OnItemClickListener() {
+    private AdapterView.OnItemClickListener onTickerItemClick = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            tickerVM.setUrl(tickerListView.getItemAtPosition(i).toString());
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            // Clickable URL
+            tickerViewModel.setUrl(adapterView.getItemAtPosition(position).toString());
         }
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View fragRoot = inflater.inflate(R.layout.fragment_tickerlist, container, false);
-        tickerListView = fragRoot.findViewById(R.id.ticker_LV);
-        return fragRoot;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the fragment layout
+        View fragmentView = inflater.inflate(R.layout.fragment_tickerlist, container, false);
+        tickerListView = fragmentView.findViewById(R.id.ticker_list);
+        return fragmentView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        tickerVM = new ViewModelProvider(requireActivity()).get(TickerViewModel.class);
-        tickerListView.setOnItemClickListener(tickerListener);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_list_item_1);
+        tickerViewModel = new ViewModelProvider(requireActivity()).get(TickerViewModel.class);
 
-        tickerVM.getTickersListLiveData().observe(getViewLifecycleOwner(), tickers -> {
+        // Set the OnClickListener
+        tickerListView.setOnItemClickListener(onTickerItemClick);
+
+        // Creating adapter
+        final ArrayAdapter<String> tickerListAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_list_item_1);
+
+        // Updating Adapter
+        tickerViewModel.getTickersListLiveData().observe(getViewLifecycleOwner(), tickers -> {
             if (tickers != null) {
-                adapter.clear();
-                adapter.addAll(tickers);
-                adapter.notifyDataSetChanged();
-                Toast.makeText(requireActivity(), String.valueOf(tickers.size()), Toast.LENGTH_LONG).show();
+                // Update
+                tickerListAdapter.clear();
+                tickerListAdapter.addAll(tickers);
+                tickerListAdapter.notifyDataSetChanged();
+
+                // Display Toast
+                Toast.makeText(requireActivity(), "Total tickers: " + tickers.size(), Toast.LENGTH_LONG).show();
             }
         });
 
-        // Set the adapter to the ListView
-        tickerListView.setAdapter(adapter);
+        // Adapter for ListView
+        tickerListView.setAdapter(tickerListAdapter);
     }
 }

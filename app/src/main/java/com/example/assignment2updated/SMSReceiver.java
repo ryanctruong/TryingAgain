@@ -13,28 +13,28 @@ public class SMSReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        final Bundle bundle = intent.getExtras();
+        final Bundle extras = intent.getExtras();
 
         if (intent.getAction() != null && intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
-            if (bundle != null) {
-                final Object[] pdusObj = (Object[]) bundle.get("pdus");
-                String format = bundle.getString("format");
+            if (extras != null) {
+                final Object[] pdus = (Object[]) extras.get("pdus");
+                String format = extras.getString("format");
 
-                if (pdusObj != null) {
-                    for (int i = 0; i < pdusObj.length; i++) {
-                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i], format);
+                if (pdus != null) {
+                    for (Object pdu : pdus) {
+                        SmsMessage sms = SmsMessage.createFromPdu((byte[]) pdu, format);
 
-                        String sender = currentMessage.getDisplayOriginatingAddress();
-                        String message = currentMessage.getMessageBody();
+                        String sender = sms.getDisplayOriginatingAddress();
+                        String message = sms.getMessageBody();
 
-                        String printMessage = "Sender: " + sender + "\nMessage: " + message;
-                        Log.i("SMS", printMessage);
-                        Toast.makeText(context, printMessage, Toast.LENGTH_LONG).show();
+                        String displayMessage = "Sender: " + sender + "\nMessage: " + message;
+                        Log.i("SMS", displayMessage);
+                        Toast.makeText(context, displayMessage, Toast.LENGTH_LONG).show();
 
-                        Intent actIntent = new Intent(context, MainActivity.class);
-                        actIntent.putExtra("sms", message);
-                        actIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(actIntent);
+                        Intent mainActivityIntent = new Intent(context, MainActivity.class);
+                        mainActivityIntent.putExtra("sms", message);
+                        mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(mainActivityIntent);
                     }
                 }
             }

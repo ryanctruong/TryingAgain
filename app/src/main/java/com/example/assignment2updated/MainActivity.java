@@ -22,13 +22,6 @@ public class MainActivity extends AppCompatActivity {
 
         ticker_VM = new ViewModelProvider(this).get(TickerViewModel.class);
 
-        Intent act_intent = getIntent();
-        if (act_intent != null) {
-            String message = act_intent.getStringExtra("sms");
-            if (message != null) {
-                handleReceivedSMS(message);
-            }
-        }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
             String[] permission = new String[]{Manifest.permission.RECEIVE_SMS};
@@ -40,26 +33,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         String message = intent.getStringExtra("sms");
-        if (message != null) {
-            handleReceivedSMS(message);
-        }
-    }
-
-    private void handleReceivedSMS(String message) {
-        if (isValidSmsFormat(message)) {
-            Toast.makeText(this, "Valid SMS: " + message, Toast.LENGTH_SHORT).show();
+        if (message == null || message.isEmpty() || message.length() > 4 || !checkValidTicker(message)) {
+                Toast.makeText(getApplicationContext(), "Invalid Ticker", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "Invalid SMS format: " + message, Toast.LENGTH_SHORT).show();
+            ticker_VM.addTicker(message.toUpperCase());
         }
-
-        ticker_VM.addTickers(message);
     }
 
-    private boolean isValidSmsFormat(String sms) {
-        if(sms.length() > 4) {
-            return false;
-        }
-        char[] chars = sms.toCharArray();
+
+    private boolean checkValidTicker(String str) {
+        char[] chars = str.toCharArray();
         for (char c : chars) {
             if (!Character.isLetter(c)) {
                 return false;

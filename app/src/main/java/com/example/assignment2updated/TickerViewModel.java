@@ -3,56 +3,48 @@ package com.example.assignment2updated;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class TickerViewModel extends ViewModel {
 
-    private MutableLiveData<String> current_url;
+    private MutableLiveData<String> currentUrl;
+    private MutableLiveData<ArrayList<String>> tickers;
 
-    private MutableLiveData<LinkedList<String>> tickers_list;
-
-    public MutableLiveData<String> getUrl() {
-        if (current_url == null) {
-            current_url = new MutableLiveData<>();
-            String newURL = "https://seekingalpha.com/";
-            current_url.setValue(newURL);
-        }
-        return current_url;
-    }
-
-    public void setUrl(String url) {
-        if (current_url == null) {
-            current_url = new MutableLiveData<>();
-        }
-        current_url.setValue("https://seekingalpha.com/symbol/" + url);
-    }
-
-    public MutableLiveData<LinkedList<String>> getTickers() {
-        if (tickers_list == null) {
-            tickers_list = new MutableLiveData<>();
-            LinkedList<String> list = new LinkedList<>();
+    public MutableLiveData<ArrayList<String>> getTickersListLiveData() {
+        if (tickers == null) {
+            tickers = new MutableLiveData<>();
+            ArrayList<String> list = new ArrayList<>();
             list.add("BAC");
             list.add("AAPL");
             list.add("DIS");
-            tickers_list.setValue(list);
+            tickers.setValue(list);
         }
-        return tickers_list;
+        return tickers;
     }
 
-    public void setTickers(LinkedList<String> list) {
-        if (tickers_list == null) {
-            tickers_list = new MutableLiveData<>();
-        }
-        tickers_list.setValue(list);
-    }
-
-    public void addTickers(String ticker) {
-        LinkedList<String> list = tickers_list.getValue();
+    public void addTicker(String ticker) {
+        ArrayList<String> list = tickers.getValue();
+        assert list != null;
         if (list.size() >= 6) {
-            list.removeLast();
+            list.remove(list.size() - 1);
         }
         list.add(ticker);
-        tickers_list.setValue(list);
+        tickers.setValue(list);
     }
 
+    public MutableLiveData<String> getUrlLiveData() {
+        if (currentUrl == null) {
+            currentUrl = new MutableLiveData<>();
+            String defaultUrl = "https://seekingalpha.com/";
+            currentUrl.setValue(defaultUrl);
+        }
+        return currentUrl;
+    }
+
+    public void setUrl(String url) {
+        if (currentUrl == null) {
+            currentUrl = new MutableLiveData<>();
+        }
+        currentUrl.setValue("https://seekingalpha.com/symbol/" + url);
+    }
 }
